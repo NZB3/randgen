@@ -2,6 +2,7 @@ package randgen
 
 import (
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -51,6 +52,32 @@ func GenFloat32(maxFloat float32) float32 {
 
 func GenFloat64(maxFloat float64) float64 {
 	return newRand().Float64() * maxFloat
+}
+
+func GenString(n int) string {
+	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	const (
+		letterIdxBits = 6                    // 6 bits to represent a letter index
+		letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+		letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+	)
+
+	sb := strings.Builder{}
+	sb.Grow(n)
+	// A src.Int63() generates 63 random bits, enough for letterIdxMax characters!
+	for i, cache, remain := n-1, newRand().Int63(), letterIdxMax; i >= 0; {
+		if remain == 0 {
+			cache, remain = newRand().Int63(), letterIdxMax
+		}
+		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+			sb.WriteByte(letterBytes[idx])
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+
+	return sb.String()
 }
 
 func GenArrayInt(arraySize int, maxInt int) []int {
@@ -169,6 +196,16 @@ func GenArrayFloat64(arraySize int, maxFloat float64) []float64 {
 	for i := range arr {
 		number := GenFloat64(maxFloat)
 		arr[i] = number
+	}
+	return arr
+}
+
+func GenArrayString(arraySize int, strMaxLen int) []string {
+	arr := make([]string, arraySize)
+
+	for i := range arr {
+		strLen := GenInt(strMaxLen)
+		arr[i] = GenString(strLen)
 	}
 	return arr
 }
