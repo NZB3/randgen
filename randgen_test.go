@@ -2,8 +2,9 @@ package randgen_test
 
 import (
 	"fmt"
-	"randgen"
 	"testing"
+
+	"github.com/NZB3/randgen"
 )
 
 func TestGenInt(t *testing.T) {
