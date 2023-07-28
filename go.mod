@@ -1,3 +1,3 @@
-module github.com/NZB3/randgen
+module github.com/nzb3/randgen
 
 go 1.20
